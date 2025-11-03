@@ -36,10 +36,15 @@ $script ='<script>
             </form>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a href="#" class="btn btn-outline-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-                <iconify-icon icon="mdi:map" class="icon text-xl line-height-1"></iconify-icon>
-                View Map
-            </a>
+            <form method="POST" action="{{ route('zones.create') }}" class="d-flex align-items-center gap-2">
+                @csrf
+                <input type="text" name="name" class="form-control form-control-sm" placeholder="Zone Name" required style="width: 140px;">
+                <input type="text" name="state" class="form-control form-control-sm" placeholder="State" required style="width: 100px;">
+                <button type="submit" class="btn btn-primary btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                    <iconify-icon icon="mdi:plus-circle-outline" class="icon text-xl line-height-1"></iconify-icon>
+                    New Zone
+                </button>
+            </form>
         </div>
     </div>
 
@@ -82,14 +87,34 @@ $script ='<script>
                         </td>
                         <td>{{ $zone->state ?? 'N/A' }}</td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                @if(isset($zonePostcodes[$zone->id]) && count($zonePostcodes[$zone->id]) > 0)
-                                <span class="badge bg-light text-dark me-1">{{ implode(', ', $zonePostcodes[$zone->id]) }}</span>
-                                @endif
-                                <a href="#" class="btn btn-xs btn-outline-success" title="Add Postcode" data-bs-toggle="modal" data-bs-target="#addPostcodeModal" data-zone-id="{{ $zone->id }}" data-zone-name="{{ $zone->name }}">
-                                    <iconify-icon icon="mdi:plus-circle-outline" class="text-success"></iconify-icon>
-                                    Add postcode
-                                </a>
+                            <div class="d-flex justify-content-between align-items-start w-100">
+                                <div>
+                                    @if(isset($zonePostcodes[$zone->id]) && count($zonePostcodes[$zone->id]) > 0)
+                                        <ul class="mb-0 ps-3">
+                                            @foreach($zonePostcodes[$zone->id] as $postcode)
+                                                <li class="mb-1">{{ $postcode }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                                <div>
+                                    <form method="POST" action="{{ route('zones.postcodes.add') }}" class="d-flex align-items-center gap-1">
+                                        @csrf
+                                        <input type="hidden" name="zone_id" value="{{ $zone->id }}">
+                                        <select class="form-select form-select-sm" name="postcodes" required style="width: 110px;">
+                                            <option value="" disabled selected>Select</option>
+                                            @foreach(($allPostcodes ?? []) as $postcode)
+                                                @if(!empty($postcode))
+                                                    <option value="{{ $postcode }}">{{ $postcode }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="btn btn-xs btn-outline-success ms-2" title="Add Postcode">
+                                            <iconify-icon icon="mdi:plus-circle-outline" class="text-success"></iconify-icon>
+                                            Add
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -189,114 +214,13 @@ $script ='<script>
 
 
 
-<!-- Add Postcode Modal -->
-<div class="modal fade" id="addPostcodeModal" tabindex="-1" aria-labelledby="addPostcodeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addPostcodeModalLabel">Add Postcode for <span id="zoneNameDisplay"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="postcodeForm">
-                <div class="modal-body">
-                    <input type="hidden" name="zone_id" id="zoneId">
-                    <div class="mb-3">
-                        <label for="postcodes" class="form-label">Postcodes</label>
-                        <input type="text" class="form-control" id="postcodes" name="postcodes" placeholder="Enter postcodes (comma separated)">
-                        <small class="form-text text-muted">Separate multiple postcodes with commas (e.g., 43600, 43650)</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Postcodes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-@section('script')
-<script>
-    $(document).ready(function() {
-        // Handle checkboxes
-        $("#selectAll").click(function() {
-            $('input[name="checkbox"]').prop('checked', $(this).prop('checked'));
-        });
 
-        // Set zone information when modal is shown
-        $('#addPostcodeModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            var zoneId = button.data('zone-id');
-            var zoneName = button.data('zone-name');
 
-            var modal = $(this);
-            modal.find('#zoneNameDisplay').text(zoneName);
-            modal.find('#zoneId').val(zoneId);
-
-            // Clear any existing value
-            modal.find('#postcodes').val('');
-
-            // Load the current postcodes from the displayed badge
-            var currentRow = button.closest('tr');
-            var postcodeCell = currentRow.find('td:eq(3)'); // 4th column (0-indexed)
-            var badgeText = postcodeCell.find('.badge').text().trim();
-
-            if (badgeText) {
-                modal.find('#postcodes').val(badgeText);
-            }
-        });
-
-        // Form submission
-        $('#postcodeForm').on('submit', function(e) {
-            e.preventDefault();
-
-            // Get form data
-            var zoneId = $('#zoneId').val();
-            var postcodes = $('#postcodes').val();
-
-            // Submit via AJAX
-            $.ajax({
-                url: '{{ route("zones.postcodes.update") }}',
-                type: 'POST',
-                data: {
-                    zone_id: zoneId,
-                    postcodes: postcodes,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Show success notification
-                        toastr.success('Postcodes updated successfully');
-
-                        // Update the badge in the table
-                        var row = $('tr').find('input[name="checkbox"][value="' + zoneId + '"]').closest('tr');
-                        var postcodeCell = row.find('td:eq(3)');
-
-                        if (postcodes) {
-                            // If there's a badge already, update it, otherwise create one
-                            if (postcodeCell.find('.badge').length) {
-                                postcodeCell.find('.badge').text(postcodes);
-                            } else {
-                                postcodeCell.find('.d-flex').prepend('<span class="badge bg-light text-dark me-1">' + postcodes + '</span>');
-                            }
-                        } else {
-                            // Remove the badge if postcodes is empty
-                            postcodeCell.find('.badge').remove();
-                        }
-
-                        // Close the modal
-                        $('#addPostcodeModal').modal('hide');
-                    } else {
-                        toastr.error('An error occurred while updating postcodes');
-                    }
-                },
-                error: function() {
-                    toastr.error('An error occurred while updating postcodes');
-                }
-            });
-        });
-    });
-</script>
-@endsection
+@if(session('success'))
+    <div class="alert alert-success mt-3">{{ session('success') }}</div>
+@elseif(session('error'))
+    <div class="alert alert-danger mt-3">{{ session('error') }}</div>
+@endif
 
 @endsection

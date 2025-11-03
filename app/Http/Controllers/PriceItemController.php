@@ -6,6 +6,8 @@ use App\Models\Zone;
 use App\Models\Site;
 use App\Models\Product;
 use App\Models\Price;
+use App\Models\PostcodeZone;
+use App\Models\Postcode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -451,42 +453,79 @@ class PriceItemController extends Controller
         // Get zones with pagination
         $zones = $query->orderBy('name')->paginate($perPage);
         
-        // Get the postcode data
+        // Get the postcode data (eager load Postcode relation)
         $zonePostcodes = [];
-        $zoneData = Zone::with('postcode_zones')->get();
+        $zoneData = Zone::with(['postcode_zones.postcode'])->get();
         foreach ($zoneData as $zone) {
-            // Store postcodes as an array for each zone
-            $zonePostcodes[$zone->id] = $zone->postcode_zones->pluck('postcode')->toArray();
+            // Store postcodes as an array for each zone, using the actual postcode value if relation exists, otherwise fallback to int
+            $zonePostcodes[$zone->id] = $zone->postcode_zones->map(function($pz) {
+                if (is_object($pz->postcode)) {
+                    return $pz->postcode->postcode;
+                } elseif (!empty($pz->postcode)) {
+                    return $pz->postcode;
+                }
+                return null;
+            })->filter()->values()->toArray();
         }
-        
-        return view('zones.index', compact('zones', 'zonePostcodes'));
+
+        // Get all postcodes from the postcodes table for the select dropdown
+        $allPostcodes = Postcode::query()->pluck('postcode')->unique()->sort()->values()->toArray();
+        return view('zones.index', compact('zones', 'zonePostcodes', 'allPostcodes'));
     }
     
     /**
-     * Add a postcode to a zone
+     * Add a postcode to a zone (standard POST, no AJAX)
      *
      * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function addPostcode(Request $request)
     {
-        $zoneId = $request->input('zone_id');
-        $postcodeValue = $request->input('postcode');
-        
+        $data = $request->validate([
+            'zone_id' => 'required|integer|exists:zones,id',
+            'postcodes' => 'required|filled|string',
+        ]);
+        $zoneId = $data['zone_id'];
+        $postcodeValue = $data['postcodes'];
+        $creatorId = $request->user()?->id ?? 0;
         try {
-            // Logic to add a postcode to a zone
-            // This would typically involve creating a new PostcodeZone record
-            // For now, we're just returning success
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Postcode added successfully'
-            ]);
+            // Only add if not already exists for this zone
+            $exists = PostcodeZone::where('zone_id', $zoneId)->where('postcode', $postcodeValue)->exists();
+            if (!$exists) {
+                PostcodeZone::create([
+                    'zone_id' => $zoneId,
+                    'postcode' => $postcodeValue,
+                    'creator_id' => $creatorId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            return redirect()->back()->with('success', 'Postcode added successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to add postcode: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()->with('error', 'Failed to add postcode: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created Zone (standard POST, no AJAX)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeZone(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+        ]);
+        $userId = $request->user()?->id ?? 0;
+        $data['user_id'] = $userId;
+        $data['creator_id'] = $userId;
+        try {
+            Zone::create($data);
+            return redirect()->back()->with('success', 'Zone created successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to create zone: ' . $e->getMessage());
         }
     }
 
