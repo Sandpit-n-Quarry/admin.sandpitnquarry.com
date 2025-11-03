@@ -34,7 +34,6 @@ $subTitle = 'Price Item Management';
                         <th scope="col">ID</th>
                         <th scope="col">Zone</th>
                         <th scope="col">State</th>
-                        <th scope="col">Postcodes</th>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
                         <th scope="col">{{ $product->name }}({{ $wheel }})</th>
@@ -48,8 +47,6 @@ $subTitle = 'Price Item Management';
                         <td>{{ $zone['id'] }}</td>
                         <td>{{ $zone['name'] }}</td>
                         <td>{{ $zone['state'] }}</td>
-                        <td>{{ $zone['postcodes'] }}</td>
-
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
                         <td>
