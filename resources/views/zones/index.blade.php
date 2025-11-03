@@ -92,7 +92,17 @@ $script ='<script>
                                     @if(isset($zonePostcodes[$zone->id]) && count($zonePostcodes[$zone->id]) > 0)
                                         <ul class="mb-0 ps-3">
                                             @foreach($zonePostcodes[$zone->id] as $postcode)
-                                                <li class="mb-1">{{ $postcode }}</li>
+                                                <li class="mb-1 d-flex align-items-center gap-2">
+                                                    <span>{{ $postcode }}</span>
+                                                    <form method="POST" action="{{ route('zones.postcodes.remove') }}" style="display:inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="zone_id" value="{{ $zone->id }}">
+                                                        <input type="hidden" name="postcode" value="{{ $postcode }}">
+                                                        <button type="submit" class="btn btn-xs btn-outline-danger p-1 ms-1" title="Remove Postcode" onclick="return confirm('Remove postcode {{ $postcode }} from this zone?')">
+                                                            <iconify-icon icon="mdi:close-circle-outline" class="text-danger"></iconify-icon>
+                                                        </button>
+                                                    </form>
+                                                </li>
                                             @endforeach
                                         </ul>
                                     @endif

@@ -14,6 +14,33 @@ use Illuminate\Support\Facades\Log;
 class PriceItemController extends Controller
 {
     /**
+     * Remove a postcode from a zone (standard POST, no AJAX)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function removePostcode(Request $request)
+    {
+        $data = $request->validate([
+            'zone_id' => 'required|integer|exists:zones,id',
+            'postcode' => 'required|string',
+        ]);
+        $zoneId = $data['zone_id'];
+        $postcodeValue = $data['postcode'];
+        try {
+            $deleted = \App\Models\PostcodeZone::where('zone_id', $zoneId)
+                ->where('postcode', $postcodeValue)
+                ->delete();
+            if ($deleted) {
+                return redirect()->back()->with('success', 'Postcode removed successfully');
+            } else {
+                return redirect()->back()->with('error', 'Postcode not found for this zone');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to remove postcode: ' . $e->getMessage());
+        }
+    }
+    /**
      * Show the form for editing the specified Price.
      *
      * @param int $id
