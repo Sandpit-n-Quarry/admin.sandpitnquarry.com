@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/load/update', 'updateLoadPrice')->name('prices.load.update');
             Route::get('/prices/item', 'getPriceItem')->name('prices.item.get');
             Route::get('/zones', 'zones')->name('zones');
+            Route::post('/zones/create', 'storeZone')->name('zones.create');
             Route::post('/zones/postcodes/update', 'updatePostcodes')->name('zones.postcodes.update');
             Route::post('/zones/postcodes/add', 'addPostcode')->name('zones.postcodes.add');
             Route::post('/zones/postcodes/remove', 'removePostcode')->name('zones.postcodes.remove');

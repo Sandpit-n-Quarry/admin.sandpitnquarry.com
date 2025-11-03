@@ -12,6 +12,7 @@ class PostcodeZone extends Model
         'creator_id',
         'updated_at',
         'zone_id',
+        'postcode',
     ];
 
     public function zone(): BelongsTo
