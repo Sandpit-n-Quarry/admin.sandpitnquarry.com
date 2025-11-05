@@ -71,6 +71,11 @@ $prices = $query->orderByDesc('id')->paginate($perPage)->withQueryString();
                                 <a href="{{ route('prices.edit', $price->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                 <a href="{{ route('prices.tonne', $price->id) }}" class="btn btn-sm btn-link">Tonne</a>
                                 <a href="{{ route('prices.load', $price->id) }}" class="btn btn-sm btn-link">Load</a>
+                                <form action="{{ route('prices.destroy', $price->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirmDeletePrice(event)">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -102,6 +107,13 @@ $prices = $query->orderByDesc('id')->paginate($perPage)->withQueryString();
 
 @push('scripts')
 <script>
+    function confirmDeletePrice(event) {
+        event.preventDefault();
+        if (confirm('Are you sure you want to delete this price?')) {
+            event.target.submit();
+        }
+        return false;
+    }
     $(document).ready(function() {
         // placeholder for future JS
     });

@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/zones/postcodes/update', 'updatePostcodes')->name('zones.postcodes.update');
             Route::post('/zones/postcodes/add', 'addPostcode')->name('zones.postcodes.add');
             Route::post('/zones/postcodes/remove', 'removePostcode')->name('zones.postcodes.remove');
+            Route::delete('/{price}', 'destroy')->name('prices.destroy');
         });
     });
 
