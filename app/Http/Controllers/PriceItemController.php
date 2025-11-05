@@ -10,6 +10,7 @@ use App\Models\PostcodeZone;
 use App\Models\Postcode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class PriceItemController extends Controller
 {
@@ -621,5 +622,31 @@ class PriceItemController extends Controller
                 'message' => 'Failed to update postcodes: ' . $e->getMessage()
             ], 500);
         }
+    }
+        /**
+     * Remove the specified Price from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $price = Price::findOrFail($id);
+        $priceItemIds = $price->price_items()->pluck('id');
+
+        // Check if any orders reference these price items
+        $ordersCount = DB::table('orders')->whereIn('price_item_id', $priceItemIds)->count();
+        if ($ordersCount > 0) {
+            return redirect()->route('prices')->with('error', 'Cannot delete price: One or more price items are used in orders.');
+        }
+
+    // Delete dependent rows in orders and carts referencing price_items
+    DB::table('orders')->whereIn('price_item_id', $priceItemIds)->delete();
+    DB::table('carts')->whereIn('price_item_id', $priceItemIds)->delete();
+
+    // Safe to delete price items
+    $price->price_items()->delete();
+    $price->delete();
+    return redirect()->route('prices')->with('success', 'Price deleted successfully');
     }
 }
