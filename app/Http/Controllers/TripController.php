@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Trip;
 use App\Models\TripStatus;
+use App\Exports\TripsExport;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TripController extends Controller
 {
@@ -127,9 +129,23 @@ class TripController extends Controller
         return view('trips/tripsList', compact('trips', 'tripStatuses'));
     }
 
+    public function exportTrips(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'trips_' . now()->format('Y-m-d_His');
+        
+        if ($request->has('status') && $request->status !== 'All Status') {
+            $filename .= '_' . str_replace(' ', '_', strtolower($request->status));
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new TripsExport($request), $filename);
+    }
+
     public function tripDetails($id)
     {
-        $trip = Trip::with(['tripStatus', 'driver', 'truck', 'tripDetails', 'tripLocation'])
+        $trip = Trip::with(['tripStatus', 'driver', 'truck', 'trip_details', 'tripLocation'])
                    ->findOrFail($id);
         
         return view('trips/tripDetails', compact('trip'));

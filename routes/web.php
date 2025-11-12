@@ -144,6 +144,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('trips')->group(function () {
         Route::controller(TripController::class)->group(function () {
             Route::get('/trips-list', 'trips')->name('tripsList');
+            Route::get('/trips-export', 'exportTrips')->name('tripsExport');
             Route::get('/trip-details/{id}', 'tripDetails')->name('tripDetails');
             Route::get('/trip-statuses', 'tripStatuses')->name('tripStatuses');
         });
