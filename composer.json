@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "backpack/basset": "*",
         "haruncpi/laravel-id-generator": "^1.1",
         "kreait/laravel-firebase": "^6.1",
