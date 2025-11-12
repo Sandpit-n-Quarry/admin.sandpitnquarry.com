@@ -345,6 +345,11 @@
                                             <a href="{{ route('tripDetails', $trip->id) }}" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" title="View Details">
                                                 <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                             </a>
+                                            @if(in_array($trip->status, ['Completing', 'Completed']) && $trip->latest && $trip->latest->delivery_proof)
+                                                <a href="{{ $trip->latest->delivery_proof }}" target="_blank" class="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" title="View Delivery Proof">
+                                                    <iconify-icon icon="mdi:file-image-outline" class="icon text-xl"></iconify-icon>
+                                                </a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
