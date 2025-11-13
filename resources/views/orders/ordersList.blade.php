@@ -57,6 +57,10 @@ $script ='<script>
             </form>
         </div>
         <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('ordersExport', request()->all()) }}" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
+                Export to Excel
+            </a>
             <a href="{{ route('orderStatuses') }}" class="btn btn-outline-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
                 <iconify-icon icon="mdi:format-list-bulleted" class="icon text-xl line-height-1"></iconify-icon>
                 Order Statuses

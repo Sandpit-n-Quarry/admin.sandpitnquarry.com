@@ -9,10 +9,12 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Site;
 use App\Models\User;
+use App\Exports\OrdersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -159,6 +161,20 @@ class OrderController extends Controller
         }
         
         return view('orders/orderDetails', compact('order'));
+    }
+
+    public function exportOrders(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'orders_' . now()->format('Y-m-d_His');
+        
+        if ($request->has('status') && $request->status !== 'All Status') {
+            $filename .= '_' . str_replace(' ', '_', strtolower($request->status));
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new OrdersExport($request), $filename);
     }
 
     public function orderStatuses(Request $request)

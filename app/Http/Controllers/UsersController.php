@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsersController extends Controller
 {
@@ -92,6 +94,20 @@ class UsersController extends Controller
         $users = $query->orderBy('created_at', 'desc')->paginate($perPage);
         
         return view('users/usersList', compact('users'));
+    }
+
+    public function exportUsers(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'users_' . now()->format('Y-m-d_His');
+        
+        if ($request->has('status') && $request->status !== 'Status') {
+            $filename .= '_' . strtolower($request->status);
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new UsersExport($request), $filename);
     }
     
     public function viewProfile($id = null)
