@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Transporter;
 use App\Models\User;
+use App\Exports\TransportersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TransporterController extends Controller
 {
@@ -45,6 +47,20 @@ class TransporterController extends Controller
 
     return view('transporters/transportersList', compact('transporters', 'types'));
 }
+
+    public function exportTransporters(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'transporters_' . now()->format('Y-m-d_His');
+        
+        if ($request->has('type') && $request->type != 'Type') {
+            $filename .= '_' . str_replace(' ', '_', strtolower($request->type));
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new TransportersExport($request), $filename);
+    }
     
     public function viewTransporter($id)
     {

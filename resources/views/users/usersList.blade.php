@@ -42,10 +42,16 @@ $script ='<script>
                 <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
             </form>
         </div>
-        <a href="{{ route('addUser') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
-            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-            Add New User
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('usersExport', request()->all()) }}" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="material-symbols:download" class="icon text-xl line-height-1"></iconify-icon>
+                Export to Excel
+            </a>
+            <a href="{{ route('addUser') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                Add New User
+            </a>
+        </div>
     </div>
     <div class="card-body p-24">
         <div class="table-responsive scroll-sm">

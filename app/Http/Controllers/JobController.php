@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Models\JobStatus;
 use App\Models\JobDetail;
+use App\Exports\JobsExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JobController extends Controller
 {
@@ -87,6 +89,20 @@ class JobController extends Controller
         });
 
         return view('jobs/jobsList', compact('jobs', 'jobStatuses'));
+    }
+
+    public function exportJobs(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'jobs_' . now()->format('Y-m-d_His');
+        
+        if ($request->has('status') && !empty($request->status)) {
+            $filename .= '_' . str_replace(' ', '_', strtolower($request->status));
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new JobsExport($request), $filename);
     }
 
     public function jobDetails($id)

@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/store-user', 'storeUser')->name('storeUser');
             Route::get('/users-grid', 'usersGrid')->name('usersGrid');
             Route::get('/users-list', 'usersList')->name('usersList');
+            Route::get('/users-export', 'exportUsers')->name('usersExport');
             Route::get('/view-profile/{id?}', 'viewProfile')->name('viewProfile');
             Route::get('/edit-user/{id}', 'editUser')->name('editUser');
             Route::put('/update-user/{id}', 'updateUser')->name('updateUser');
@@ -99,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/add-transporter', 'addTransporter')->name('addTransporter');
             Route::post('/store-transporter', 'storeTransporter')->name('storeTransporter');
             Route::get('/transporters-list', 'transportersList')->name('transportersList');
+            Route::get('/transporters-export', 'exportTransporters')->name('transportersExport');
             Route::get('/view-transporter/{id}', 'viewTransporter')->name('viewTransporter');
             Route::get('/edit-transporter/{id}', 'editTransporter')->name('editTransporter');
             Route::put('/update-transporter/{id}', 'updateTransporter')->name('updateTransporter');
@@ -123,6 +125,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('orders')->group(function () {
         Route::controller(OrderController::class)->group(function () {
             Route::get('/orders-list', 'orders')->name('ordersList');
+            Route::get('/orders-export', 'exportOrders')->name('ordersExport');
             Route::get('/order-details/{id}', 'orderDetails')->name('orderDetails');
             Route::get('/order-edit/{id}', 'orderEdit')->name('orderEdit');
             Route::get('/order-statuses', 'orderStatuses')->name('orderStatuses');
@@ -135,6 +138,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('jobs')->group(function () {
         Route::controller(JobController::class)->group(function () {
             Route::get('/jobs-list', 'jobs')->name('jobsList');
+            Route::get('/jobs-export', 'exportJobs')->name('jobsExport');
             Route::get('/job-details/{id}', 'jobDetails')->name('jobDetails');
             Route::get('/job-statuses', 'jobStatuses')->name('jobStatuses');
         });
