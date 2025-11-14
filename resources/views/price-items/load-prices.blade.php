@@ -27,14 +27,14 @@ $subTitle = 'Price Item Management';
             </div>
         </div>
 
-        <div class="table-responsive scroll-sm">
+        <div class="table-responsive scroll-sm" style="max-height: 70vh; overflow-y: auto;">
             <table class="table bordered-table sm-table mb-0">
-                <thead>
+                <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Zone</th>
-                        <th scope="col">Postcode</th>
-                        <th scope="col">State</th>
+                        <th scope="col" style="position: sticky; left: 0; z-index: 12;">ID</th>
+                        <th scope="col" style="position: sticky; left: 45px; z-index: 12;">Zone</th>
+                        <th scope="col" style="position: sticky; left: 150px; z-index: 12;">Postcode</th>
+                        <th scope="col" style="position: sticky; left: 350px; z-index: 12;">State</th>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
                         <th scope="col">{{ $product->name }}({{ $wheel }})</th>
@@ -45,10 +45,10 @@ $subTitle = 'Price Item Management';
                 <tbody>
                     @foreach($zonesData as $zone)
                     <tr>
-                        <td>{{ $zone['id'] }}</td>
-                        <td>{{ $zone['name'] }}</td>
-                        <td>{{ $zone['postcodes'] ?? 'N/A' }}</td>
-                        <td>{{ $zone['state'] }}</td>
+                        <td style="position: sticky; left: 0; z-index: 9;">{{ $zone['id'] }}</td>
+                        <td style="position: sticky; left: 45px; z-index: 9;">{{ $zone['name'] }}</td>
+                        <td style="position: sticky; left: 150px; z-index: 9; max-width: 200px; white-space: normal; word-wrap: break-word;">{{ $zone['postcodes'] ?? 'N/A' }}</td>
+                        <td style="position: sticky; left: 350px; z-index: 9;">{{ $zone['state'] }}</td>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
                         <td>
@@ -162,6 +162,31 @@ $subTitle = 'Price Item Management';
 @endsection
 
 @push('scripts')
+<style>
+    /* Sticky header and column styles */
+    .table-responsive.scroll-sm {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+    
+    .table thead th {
+        border-bottom: 2px solid #d1d5db !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .table tbody td[style*="position: sticky"] {
+        border-right: 1px solid #e5e7eb;
+    }
+    
+    .table thead th[style*="position: sticky"] {
+        border-right: 1px solid #d1d5db;
+    }
+    
+    /* Zebra striping for better readability */
+    .table tbody tr:nth-child(even) td[style*="background-color: #fff"] {
+        background-color: #f9fafb !important;
+    }
+</style>
 <script>
     $(document).ready(function() {
         // Small visual styles for save state
