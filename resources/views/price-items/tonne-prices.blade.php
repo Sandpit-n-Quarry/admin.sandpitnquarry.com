@@ -27,13 +27,13 @@ $subTitle = 'Price Item Management';
             </div>
         </div>
 
-        <div class="table-responsive scroll-sm">
+        <div class="table-responsive scroll-sm" style="max-height: 70vh; overflow-y: auto;">
             <table class="table bordered-table sm-table mb-0">
-                <thead>
+                <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Site</th>
-                        <th scope="col">State</th>
+                        <th scope="col" style="position: sticky; left: 0; z-index: 12;">ID</th>
+                        <th scope="col" style="position: sticky; left: 50px; z-index: 12;">Site</th>
+                        <th scope="col" style="position: sticky; left: 250px; z-index: 12;">State</th>
                         @foreach($products as $product)
                         <th scope="col">{{ $product->name }}</th>
                         @endforeach
@@ -42,9 +42,9 @@ $subTitle = 'Price Item Management';
                 <tbody>
                     @foreach($sitesData as $site)
                     <tr>
-                        <td>{{ $site['id'] }}</td>
-                        <td>{{ $site['name'] }}</td>
-                        <td>{{ $site['state'] }}</td>
+                        <td style="position: sticky; left: 0; z-index: 9;">{{ $site['id'] }}</td>
+                        <td style="position: sticky; left: 45px; z-index: 9;">{{ $site['name'] }}</td>
+                        <td style="position: sticky; left: 150px; z-index: 9;">{{ $site['state'] }}</td>
 
                         @foreach($products as $product)
                         <td>
