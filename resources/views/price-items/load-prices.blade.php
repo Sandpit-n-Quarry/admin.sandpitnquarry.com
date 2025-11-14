@@ -33,6 +33,7 @@ $subTitle = 'Price Item Management';
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Zone</th>
+                        <th scope="col">Postcode</th>
                         <th scope="col">State</th>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
@@ -46,6 +47,7 @@ $subTitle = 'Price Item Management';
                     <tr>
                         <td>{{ $zone['id'] }}</td>
                         <td>{{ $zone['name'] }}</td>
+                        <td>{{ $zone['postcodes'] ?? 'N/A' }}</td>
                         <td>{{ $zone['state'] }}</td>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
