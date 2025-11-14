@@ -52,7 +52,7 @@
                             @endif
                         </form>
                         <form class="navbar-search" method="GET" id="search-form">
-                            <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search trips..." value="{{ request('search') }}">
+                            <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search Trip..." value="{{ request('search') }}">
                             <iconify-icon icon="ion:search-outline" class="icon" onclick="document.getElementById('search-form').submit()"></iconify-icon>
                             @if(request('status'))
                                 <input type="hidden" name="status" value="{{ request('status') }}">
