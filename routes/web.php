@@ -130,6 +130,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/order-edit/{id}', 'orderEdit')->name('orderEdit');
             Route::get('/order-statuses', 'orderStatuses')->name('orderStatuses');
             Route::get('/free-deliveries', 'freeDeliveries')->name('freeDeliveries');
+            Route::get('/free-deliveries-export', 'exportFreeDeliveries')->name('freeDeliveriesExport');
             Route::get('/self-pickups', 'selfPickups')->name('selfPickups');
         });
     });

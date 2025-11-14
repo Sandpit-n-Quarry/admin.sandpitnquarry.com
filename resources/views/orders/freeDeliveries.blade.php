@@ -51,6 +51,10 @@ $subTitle = 'Free Delivery Orders Management';
             </form>
         </div>
         <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('freeDeliveriesExport', request()->all()) }}" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2">
+                <iconify-icon icon="lucide:download" class="icon text-xl line-height-1"></iconify-icon>
+                Export to Excel
+            </a>
             <div class="bg-success-50 text-success-600 px-16 py-8 radius-8">
                 <iconify-icon icon="mdi:truck-delivery" class="icon me-1"></iconify-icon>
                 Total Free Deliveries: {{ $freeDeliveries->total() }}
