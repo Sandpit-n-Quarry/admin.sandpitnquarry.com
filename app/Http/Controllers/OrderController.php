@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Site;
 use App\Models\User;
 use App\Exports\OrdersExport;
+use App\Exports\FreeDeliveriesExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
@@ -293,6 +294,26 @@ public function freeDeliveries(Request $request)
         
         return view('orders/freeDeliveries', compact('freeDeliveries'));
     }
+
+    public function exportFreeDeliveries(Request $request)
+    {
+        // Generate filename with current date and filters
+        $filename = 'free_deliveries_' . now()->format('Y-m-d_His');
+        
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            if ($request->filled('start_date')) {
+                $filename .= '_from_' . $request->start_date;
+            }
+            if ($request->filled('end_date')) {
+                $filename .= '_to_' . $request->end_date;
+            }
+        }
+        
+        $filename .= '.xlsx';
+        
+        return Excel::download(new FreeDeliveriesExport($request), $filename);
+    }
+
     /**
      * Display a listing of self-pickup orders
      *
