@@ -19,7 +19,7 @@ $subTitle = 'Price Item Management';
         <div class="row mb-3">
             <div class="col-md-6">
                 <form class="navbar-search" method="GET">
-                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search zones..." value="{{ request('search') }}">
+                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search zones or postcodes..." value="{{ request('search') }}">
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                     <input type="hidden" name="price_id" value="{{ $price->id }}">
                     <button type="submit" class="d-none"></button>
@@ -47,7 +47,13 @@ $subTitle = 'Price Item Management';
                     <tr>
                         <td style="position: sticky; left: 0; z-index: 9;">{{ $zone['id'] }}</td>
                         <td style="position: sticky; left: 45px; z-index: 9;">{{ $zone['name'] }}</td>
-                        <td style="position: sticky; left: 150px; z-index: 9; max-width: 200px; white-space: normal; word-wrap: break-word;">{{ $zone['postcodes'] ?? 'N/A' }}</td>
+                        <td style="position: sticky; left: 150px; z-index: 9; max-width: 200px; white-space: normal; word-wrap: break-word;">
+                            @if(request('search') && ($zone['postcodes'] ?? false))
+                                {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<mark style="background-color: #fef08a; padding: 2px 4px; border-radius: 3px;">$1</mark>', $zone['postcodes']) !!}
+                            @else
+                                {{ $zone['postcodes'] ?? 'N/A' }}
+                            @endif
+                        </td>
                         <td style="position: sticky; left: 350px; z-index: 9;">{{ $zone['state'] }}</td>
                         @foreach($wheels as $wheel)
                         @foreach($products as $product)
@@ -185,6 +191,12 @@ $subTitle = 'Price Item Management';
     /* Zebra striping for better readability */
     .table tbody tr:nth-child(even) td[style*="background-color: #fff"] {
         background-color: #f9fafb !important;
+    }
+    
+    /* Highlight matching postcodes */
+    mark {
+        font-weight: 600;
+        color: #854d0e;
     }
 </style>
 <script>
