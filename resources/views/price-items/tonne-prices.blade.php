@@ -27,13 +27,13 @@ $subTitle = 'Price Item Management';
             </div>
         </div>
 
-        <div class="table-responsive scroll-sm" style="max-height: 70vh; overflow-y: auto;">
+        <div class="table-responsive scroll-sm" style="max-height: 70vh; overflow: auto;">
             <table class="table bordered-table sm-table mb-0">
                 <thead style="position: sticky; top: 0; z-index: 10;">
                     <tr>
-                        <th scope="col" style="position: sticky; left: 0; z-index: 12;">ID</th>
-                        <th scope="col" style="position: sticky; left: 50px; z-index: 12;">Site</th>
-                        <th scope="col" style="position: sticky; left: 250px; z-index: 12;">State</th>
+                        <th scope="col" style="position: sticky; left: 0px; z-index: 12; width: 50px;">ID</th>
+                        <th scope="col" style="position: sticky; left: 50px; z-index: 12; min-width: 200px; width: 200px;">Site</th>
+                        <th scope="col" style="position: sticky; left: 250px; z-index: 12; width: 100px;">State</th>
                         @foreach($products as $product)
                         <th scope="col">{{ $product->name }}</th>
                         @endforeach
@@ -42,9 +42,9 @@ $subTitle = 'Price Item Management';
                 <tbody>
                     @foreach($sitesData as $site)
                     <tr>
-                        <td style="position: sticky; left: 0; z-index: 9;">{{ $site['id'] }}</td>
-                        <td style="position: sticky; left: 45px; z-index: 9;">{{ $site['name'] }}</td>
-                        <td style="position: sticky; left: 150px; z-index: 9;">{{ $site['state'] }}</td>
+                        <td style="position: sticky; left: 0px; z-index: 9; width: 50px;">{{ $site['id'] }}</td>
+                        <td style="position: sticky; left: 50px; z-index: 9; min-width: 200px; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $site['name'] }}</td>
+                        <td style="position: sticky; left: 250px; z-index: 9; width: 100px;">{{ $site['state'] }}</td>
 
                         @foreach($products as $product)
                         <td>
@@ -135,6 +135,32 @@ $subTitle = 'Price Item Management';
 @endsection
 
 @push('scripts')
+<style>
+    /* Sticky header and column styles */
+    .table-responsive.scroll-sm {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+    }
+    
+    .table thead th {
+        border-bottom: 2px solid #d1d5db !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .table tbody td[style*="position: sticky"] {
+        border-right: 1px solid #e5e7eb;
+    }
+    
+    .table thead th[style*="position: sticky"] {
+        border-right: 1px solid #d1d5db;
+    }
+    
+    /* Zebra striping for better readability */
+    .table tbody tr:nth-child(even) td[style*="background-color: #fff"] {
+        background-color: #f9fafb !important;
+    }
+    
+</style>
 <script>
     $(document).ready(function() {
         // Small visual styles for save state (inserted via JS into head in case no central CSS)

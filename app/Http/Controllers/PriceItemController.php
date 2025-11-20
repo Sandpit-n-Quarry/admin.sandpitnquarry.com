@@ -218,7 +218,10 @@ class PriceItemController extends Controller
         if ($search) {
             $zonesQuery->where(function($query) use ($search) {
                 $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($search) . "%"])
-                      ->orWhereRaw('LOWER(state) LIKE ?', ["%" . strtolower($search) . "%"]);
+                      ->orWhereRaw('LOWER(state) LIKE ?', ["%" . strtolower($search) . "%"])
+                      ->orWhereHas('postcode_zones', function($q) use ($search) {
+                          $q->whereRaw('CAST(postcode AS TEXT) LIKE ?', ["%" . $search . "%"]);
+                      });
             });
         }
         
