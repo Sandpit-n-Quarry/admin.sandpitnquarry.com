@@ -50,7 +50,7 @@ Route::controller(MfaController::class)->prefix('mfa')->name('mfa.')->group(func
 });
 
 // Protected routes - Require authentication and MFA verification
-Route::middleware(['auth', 'mfa.verify'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\EnsureMfaVerified::class])->group(function () {
     // Dashboard root route
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/', 'index')->name('dashboard.index');
