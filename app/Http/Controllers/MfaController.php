@@ -36,11 +36,42 @@ class MfaController extends Controller
         }
 
         // Get remaining time for current code
-        $remainingTime = $this->mfaService->getRemainingTime($user);
+        $verificationCode = \App\Models\EmailVerificationCode::forUser($user->id)
+            ->valid()
+            ->orderBy('created_at', 'desc')
+            ->first();
+        
+        // If no valid code exists, generate a new one
+        if (!$verificationCode) {
+            Log::warning("No valid MFA code found for user {$user->id}, generating new one");
+            $verificationCode = $this->mfaService->generateAndSendCode($user, $request->ip());
+            
+            if (!$verificationCode) {
+                return redirect()->route('signin')->withErrors([
+                    'error' => 'Failed to generate verification code. Please try logging in again.'
+                ]);
+            }
+        }
+        
+        Log::info("MFA page loaded", [
+            'user_id' => $user->id,
+            'code_id' => $verificationCode->id,
+            'expires_at' => $verificationCode->expires_at->toDateTimeString(),
+            'now' => now()->toDateTimeString(),
+        ]);
+        
+        $remainingTime = max(0, $verificationCode->expires_at->diffInSeconds(now()));
+        $expiresAt = $verificationCode->expires_at;
+        
+        Log::info("MFA remaining time calculated", [
+            'remaining_time' => $remainingTime,
+            'expires_at' => $expiresAt->toDateTimeString(),
+        ]);
 
         return view('authentication.mfa-verify', [
             'email' => $user->email,
             'remainingTime' => $remainingTime,
+            'expiresAt' => $expiresAt,
             'canResend' => !$this->mfaService->hasExceededGenerationLimit($user),
         ]);
     }
