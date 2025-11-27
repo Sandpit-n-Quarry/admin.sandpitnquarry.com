@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\MfaController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\DashboardController;
@@ -38,6 +39,14 @@ Route::controller(AuthenticationController::class)->prefix('authentication')->gr
     Route::post('/signin', 'postLogin')->name('signin.post');
     // Logout (kept here since it's related to authentication)
     Route::post('/logout', 'logout')->name('logout');
+});
+
+// MFA Routes (no auth middleware - these are part of the login flow)
+Route::controller(MfaController::class)->prefix('mfa')->name('mfa.')->group(function () {
+    Route::get('/verify', 'show')->name('show');
+    Route::post('/verify', 'verify')->name('verify');
+    Route::post('/resend', 'resend')->name('resend');
+    Route::post('/cancel', 'cancel')->name('cancel');
 });
 
 // Protected routes - Require authentication

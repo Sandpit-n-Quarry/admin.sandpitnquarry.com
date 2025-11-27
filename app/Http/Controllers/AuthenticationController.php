@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MfaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AuthenticationController extends Controller
 {
-    public function __construct()
+    protected MfaService $mfaService;
+
+    public function __construct(MfaService $mfaService)
     {
-        // Middleware will be applied in routes
+        $this->mfaService = $mfaService;
     }
     
     public function forgotPassword()
@@ -48,9 +52,38 @@ class AuthenticationController extends Controller
         
         $credentials = $request->only('email', 'password');
         
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            // Authentication was successful
-            return redirect()->intended('/');
+        // Validate credentials without logging in
+        if (Auth::validate($credentials)) {
+            // Credentials are valid - get the user
+            $user = \App\Models\User::where('email', $request->email)->first();
+            
+            // Check if MFA is enabled and required for this user
+            if ($this->mfaService->isMfaEnabled() && $this->mfaService->isRequiredForUser($user)) {
+                // Generate and send MFA code
+                $verificationCode = $this->mfaService->generateAndSendCode($user, $request->ip());
+                
+                if (!$verificationCode) {
+                    Log::error("Failed to generate MFA code for user {$user->id}");
+                    return redirect()->back()
+                        ->withErrors(['email' => 'Failed to send verification code. Please try again or contact support.'])
+                        ->withInput($request->except('password'));
+                }
+                
+                // Store user ID in session for MFA verification
+                $request->session()->put('mfa_user_id', $user->id);
+                $request->session()->put('mfa_remember', $request->has('remember'));
+                
+                Log::info("User {$user->id} passed credentials check, redirecting to MFA");
+                
+                // Redirect to MFA verification page
+                return redirect()->route('mfa.show');
+            }
+            
+            // MFA not required - proceed with normal login
+            if (Auth::attempt($credentials, $request->has('remember'))) {
+                Log::info("User {$user->id} logged in without MFA");
+                return redirect()->intended('/');
+            }
         }
         
         // Authentication failed
