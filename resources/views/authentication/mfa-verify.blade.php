@@ -359,11 +359,21 @@
                     <div class="timer-display" id="timerDisplay">
                         <span class="timer-icon">⏱️</span>
                         <span class="timer-text">Code expires in <span id="countdown">{{ gmdate('i:s', $remainingTime) }}</span></span>
+                        @if($expiresAt)
+                            <div style="font-size: 12px; margin-top: 5px; color: #6c757d;">
+                                Expires at {{ $expiresAt->format('g:i A') }}
+                            </div>
+                        @endif
                     </div>
                 @else
                     <div class="timer-display expired" id="timerDisplay">
                         <span class="timer-icon">⚠️</span>
                         <span class="timer-text">Code has expired. Please request a new one.</span>
+                        @if($expiresAt)
+                            <div style="font-size: 12px; margin-top: 5px;">
+                                Expired at {{ $expiresAt->format('g:i A') }}
+                            </div>
+                        @endif
                     </div>
                 @endif
 
