@@ -23,6 +23,12 @@ class EnsureMfaVerified
 
         // If there's a pending MFA verification, redirect to MFA page
         if ($request->session()->has('mfa_user_id')) {
+            \Illuminate\Support\Facades\Log::info('MFA Middleware: Pending MFA verification detected', [
+                'mfa_user_id' => $request->session()->get('mfa_user_id'),
+                'current_route' => $request->route()->getName(),
+                'is_mfa_route' => $request->routeIs('mfa.*'),
+            ]);
+            
             // Don't redirect if already on MFA routes
             if (!$request->routeIs('mfa.*')) {
                 return redirect()->route('mfa.show');

@@ -58,5 +58,6 @@ class Kernel extends HttpKernel
         'session.timeout' => \App\Http\Middleware\SessionTimeout::class,
         'jwt.auth' => \PHPOpenSourceSaver\JWTAuth\Http\Middleware\Authenticate::class,
         'jwt.refresh' => \PHPOpenSourceSaver\JWTAuth\Http\Middleware\RefreshToken::class,
+        'mfa.verify' => \App\Http\Middleware\EnsureMfaVerified::class,
     ];
 }

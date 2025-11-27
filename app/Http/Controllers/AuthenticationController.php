@@ -57,8 +57,21 @@ class AuthenticationController extends Controller
             // Credentials are valid - get the user
             $user = \App\Models\User::where('email', $request->email)->first();
             
+            // IMPORTANT: Ensure user is NOT already logged in
+            if (Auth::check()) {
+                Log::warning("User already authenticated during login attempt, forcing logout", [
+                    'auth_user_id' => Auth::id(),
+                    'target_user_id' => $user->id,
+                ]);
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+            
             // Check if MFA is enabled and required for this user
             if ($this->mfaService->isMfaEnabled() && $this->mfaService->isRequiredForUser($user)) {
+                Log::info("MFA required for user {$user->id}");
+                
                 // Generate and send MFA code
                 $verificationCode = $this->mfaService->generateAndSendCode($user, $request->ip());
                 
@@ -73,7 +86,10 @@ class AuthenticationController extends Controller
                 $request->session()->put('mfa_user_id', $user->id);
                 $request->session()->put('mfa_remember', $request->has('remember'));
                 
-                Log::info("User {$user->id} passed credentials check, redirecting to MFA");
+                Log::info("User {$user->id} passed credentials check, redirecting to MFA", [
+                    'session_mfa_user_id' => session('mfa_user_id'),
+                    'session_mfa_remember' => session('mfa_remember'),
+                ]);
                 
                 // Redirect to MFA verification page
                 return redirect()->route('mfa.show');
