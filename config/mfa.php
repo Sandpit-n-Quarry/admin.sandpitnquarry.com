@@ -21,7 +21,7 @@ return [
     | Recommended: 10-15 minutes for security balance.
     |
     */
-    'code_expiration_minutes' => env('MFA_CODE_EXPIRATION_MINUTES', 15),
+    'code_expiration_minutes' => (int) env('MFA_CODE_EXPIRATION_MINUTES', 15),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ return [
     | before being required to request a new code or re-login.
     |
     */
-    'max_verification_attempts' => env('MFA_MAX_VERIFICATION_ATTEMPTS', 5),
+    'max_verification_attempts' => (int) env('MFA_MAX_VERIFICATION_ATTEMPTS', 5),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
     | user must wait before trying again. Default: 900 seconds (15 minutes)
     |
     */
-    'verification_rate_limit_window' => env('MFA_VERIFICATION_RATE_LIMIT_WINDOW', 900),
+    'verification_rate_limit_window' => (int) env('MFA_VERIFICATION_RATE_LIMIT_WINDOW', 900),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +66,7 @@ return [
     | within the generation rate limit window.
     |
     */
-    'max_generation_attempts' => env('MFA_MAX_GENERATION_ATTEMPTS', 3),
+    'max_generation_attempts' => (int) env('MFA_MAX_GENERATION_ATTEMPTS', 3),
 
     /*
     |--------------------------------------------------------------------------
@@ -79,7 +79,7 @@ return [
     | Default: 900 seconds (15 minutes)
     |
     */
-    'generation_rate_limit_window' => env('MFA_GENERATION_RATE_LIMIT_WINDOW', 900),
+    'generation_rate_limit_window' => (int) env('MFA_GENERATION_RATE_LIMIT_WINDOW', 900),
 
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ return [
     | permanently deleted from the database during cleanup operations.
     |
     */
-    'cleanup_after_days' => env('MFA_CLEANUP_AFTER_DAYS', 7),
+    'cleanup_after_days' => (int) env('MFA_CLEANUP_AFTER_DAYS', 7),
 
     /*
     |--------------------------------------------------------------------------
