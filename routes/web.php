@@ -49,8 +49,8 @@ Route::controller(MfaController::class)->prefix('mfa')->name('mfa.')->group(func
     Route::post('/cancel', 'cancel')->name('cancel');
 });
 
-// Protected routes - Require authentication
-Route::middleware(['auth'])->group(function () {
+// Protected routes - Require authentication and MFA verification
+Route::middleware(['auth', 'mfa.verify'])->group(function () {
     // Dashboard root route
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/', 'index')->name('dashboard.index');
