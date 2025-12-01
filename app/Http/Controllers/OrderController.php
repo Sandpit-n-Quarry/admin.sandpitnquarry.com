@@ -190,7 +190,12 @@ public function freeDeliveries(Request $request)
             'wheel',
             'purchase',
             'order_details',
-            'transportation_amount.order_amountable.route',
+            'transportation_amount.order_amountable',
+            'transportation_amount' => function ($query) {
+                $query->with(['order_amountable' => function ($q) {
+                    $q->with('route');
+                }]);
+            },
             'trips'
         ])->where('address_id', '>', 0);
         
