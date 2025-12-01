@@ -123,6 +123,8 @@ class OrderController extends Controller
             'order_details',
             'trips.trip_details.assignment.driver.user',
             'trips.trip_details.assignment.truck',
+            'trips.latest.assignment.driver.user',
+            'trips.latest.assignment.truck',
             'orderPayment'
         ])->findOrFail($id);
         
