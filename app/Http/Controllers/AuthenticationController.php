@@ -59,10 +59,6 @@ class AuthenticationController extends Controller
             
             // IMPORTANT: Ensure user is NOT already logged in
             if (Auth::check()) {
-                Log::warning("User already authenticated during login attempt, forcing logout", [
-                    'auth_user_id' => Auth::id(),
-                    'target_user_id' => $user->id,
-                ]);
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -70,13 +66,11 @@ class AuthenticationController extends Controller
             
             // Check if MFA is enabled and required for this user
             if ($this->mfaService->isMfaEnabled() && $this->mfaService->isRequiredForUser($user)) {
-                Log::info("MFA required for user {$user->id}");
                 
                 // Generate and send MFA code
                 $verificationCode = $this->mfaService->generateAndSendCode($user, $request->ip());
                 
                 if (!$verificationCode) {
-                    Log::error("Failed to generate MFA code for user {$user->id}");
                     return redirect()->back()
                         ->withErrors(['email' => 'Failed to send verification code. Please try again or contact support.'])
                         ->withInput($request->except('password'));
@@ -86,10 +80,6 @@ class AuthenticationController extends Controller
                 $request->session()->put('mfa_user_id', $user->id);
                 $request->session()->put('mfa_remember', $request->has('remember'));
                 
-                Log::info("User {$user->id} passed credentials check, redirecting to MFA", [
-                    'session_mfa_user_id' => session('mfa_user_id'),
-                    'session_mfa_remember' => session('mfa_remember'),
-                ]);
                 
                 // Redirect to MFA verification page
                 return redirect()->route('mfa.show');
@@ -97,7 +87,6 @@ class AuthenticationController extends Controller
             
             // MFA not required - proceed with normal login
             if (Auth::attempt($credentials, $request->has('remember'))) {
-                Log::info("User {$user->id} logged in without MFA");
                 return redirect()->intended('/');
             }
         }
