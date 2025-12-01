@@ -96,8 +96,8 @@ protected static function boot()
     protected $appends = [
         'accepted',
         'available',
-        'completed',
-        'ongoing',
+        // 'completed', // Removed to prevent N+1 queries - calculate in controller when needed
+        // 'ongoing',   // Removed to prevent N+1 queries - calculate in controller when needed
     ];
 
     protected $casts = [
