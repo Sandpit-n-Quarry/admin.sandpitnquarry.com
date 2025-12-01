@@ -42,7 +42,7 @@ class OrderController extends Controller
             'oldest',
             'orderStatus',
             'order_details',
-            'jobs.trips'
+            'trips'
         ]);
 
         // Apply search filter if provided (case-insensitive)
@@ -68,7 +68,7 @@ class OrderController extends Controller
         if ($request->filled('status') && $request->input('status') !== 'All Status') {
             $status = $request->input('status');
             $query->whereHas('orderStatus', function($q) use ($status) {
-                $q->where('name', $status);
+                $q->where('status', $status);
             });
         }
 
@@ -77,22 +77,9 @@ class OrderController extends Controller
 
         // Calculate additional properties needed for the view
         $orders->each(function ($order) {
-            // Set defaults for properties
-            $order->completed = $order->completed ?? 0;
-            $order->ongoing = $order->ongoing ?? 0;
-            
-            // Calculate completed and ongoing counts from jobs and trips
-            if ($order->jobs) {
-                $order->jobs->each(function ($job) use (&$order) {
-                    if ($job->trips) {
-                        $completedTrips = $job->trips->where('status', 'Completed')->count();
-                        $ongoingTrips = $job->trips->whereIn('status', ['Assigned', 'Started', 'Loading', 'Loaded', 'Unloading', 'Arriving', 'Arrived', 'Notified', 'Waiting', 'Confirmed'])->count();
-                        
-                        $order->completed += $completedTrips;
-                        $order->ongoing += $ongoingTrips;
-                    }
-                });
-            }
+            // Calculate completed and ongoing counts using the eager-loaded trips relationship
+            $order->completed = $order->trips->where('status', 'Completed')->count();
+            $order->ongoing = $order->trips->whereIn('status', ['Assigned', 'Started', 'Loading', 'Loaded', 'Unloading', 'Arriving', 'Arrived', 'Notified', 'Waiting', 'Confirmed'])->count();
             
             // Format monetary values
             if ($order->price_per_unit) {
@@ -134,23 +121,14 @@ class OrderController extends Controller
             'oldest',
             'orderStatus',
             'order_details',
-            'jobs.trips.trip_details.assignment.driver.user',
-            'jobs.trips.trip_details.assignment.truck',
+            'trips.trip_details.assignment.driver.user',
+            'trips.trip_details.assignment.truck',
             'orderPayment'
         ])->findOrFail($id);
         
-        // Calculate additional properties
-        $order->completed = 0;
-        $order->ongoing = 0;
-        
-        if ($order->jobs) {
-            foreach ($order->jobs as $job) {
-                if ($job->trips) {
-                    $order->completed += $job->trips->where('status', 'Completed')->count();
-                    $order->ongoing += $job->trips->whereIn('status', ['Assigned', 'Started', 'Loading', 'Loaded', 'Unloading', 'Arriving', 'Arrived', 'Notified', 'Waiting', 'Confirmed'])->count();
-                }
-            }
-        }
+        // Calculate additional properties using the eager-loaded trips relationship
+        $order->completed = $order->trips->where('status', 'Completed')->count();
+        $order->ongoing = $order->trips->whereIn('status', ['Assigned', 'Started', 'Loading', 'Loaded', 'Unloading', 'Arriving', 'Arrived', 'Notified', 'Waiting', 'Confirmed'])->count();
         
         // Format monetary values
         if ($order->price_per_unit) {
@@ -211,6 +189,7 @@ public function freeDeliveries(Request $request)
             'purchase',
             'order_details',
             'transportation_amount.order_amountable.route',
+            'trips'
         ])->where('address_id', '>', 0);
         
         // Handle search - broadened to more relations/fields (case-insensitive)
@@ -272,9 +251,9 @@ public function freeDeliveries(Request $request)
         
         // Process each order for display
         $freeDeliveries->each(function ($order) {
-            // Set defaults for properties
-            $order->completed = $order->completed ?? 0;
-            $order->ongoing = $order->ongoing ?? 0;
+            // Calculate completed and ongoing counts using the eager-loaded trips relationship
+            $order->completed = $order->trips->where('status', 'Completed')->count();
+            $order->ongoing = $order->trips->whereIn('status', ['Assigned', 'Started', 'Loading', 'Loaded', 'Unloading', 'Arriving', 'Arrived', 'Notified', 'Waiting', 'Confirmed'])->count();
             
             // Keep transportation_amount as numeric MYR value (float), not a formatted string
             if ($order->transportation_amount && isset($order->transportation_amount->amount)) {
@@ -330,7 +309,6 @@ public function freeDeliveries(Request $request)
                     'wheel', 
                     'quarry',
                     'agent',
-                    'jobs',
                     'trips'
                 ])
                 ->where(function($q) {
@@ -389,7 +367,6 @@ public function freeDeliveries(Request $request)
             'wheel',
             'quarry',
             'agent',
-            'jobs',
             'trips'
         ])->findOrFail($id);
         
