@@ -19,7 +19,7 @@ class TripController extends Controller
             'job.order.customer',
             'job.order.product',
             'job.order.wheel',
-            'job.order.transportation_amount',
+            'job.order.transportation_amount.order_amountable.route',
             'job.order.oldest.site',
             'job.order.latest.site',
             'latest.assignment.driver.user',

@@ -319,8 +319,6 @@ class PriceItemController extends Controller
 
             // reload to get casts applied
             $item->refresh();
-            Log::info('PriceItem saved', ['price_item_id' => $item->id, 'amount' => $item->amount]);
-
             return response()->json([
                 'success' => true,
                 'id' => $item->id,

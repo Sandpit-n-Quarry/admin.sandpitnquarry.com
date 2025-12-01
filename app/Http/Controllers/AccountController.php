@@ -198,8 +198,6 @@ class AccountController extends Controller
                     $auth->setCustomUserClaims("$user->id", [
                         'customer' => json_encode($user),
                     ]);
-                    
-                    Log::info("Created missing Firebase user during login: {$user->id}");
                 } catch (\Exception $e) {
                     Log::warning("Failed to create Firebase user during login: {$e->getMessage()}");
                 }
