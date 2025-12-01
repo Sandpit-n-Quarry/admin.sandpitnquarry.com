@@ -83,7 +83,6 @@ class MfaService
     {
         // Check rate limit
         if ($this->hasExceededGenerationLimit($user)) {
-            Log::warning("User {$user->id} exceeded MFA code generation rate limit");
             return null;
         }
 
@@ -107,7 +106,6 @@ class MfaService
         // Send email
         try {
             Mail::to($user->email)->send(new MfaVerificationCodeMail($user, $plainCode, $expiresAt));
-            Log::info("MFA code sent to user {$user->id}");
         } catch (\Exception $e) {
             Log::error("Failed to send MFA code to user {$user->id}: {$e->getMessage()}");
             // Delete the code if email fails
@@ -128,7 +126,6 @@ class MfaService
     {
         // Check rate limit
         if ($this->hasExceededVerificationLimit($user)) {
-            Log::warning("User {$user->id} exceeded MFA verification rate limit");
             return [
                 'success' => false,
                 'message' => 'Too many verification attempts. Please try again later.',
@@ -168,8 +165,6 @@ class MfaService
             
             $remainingAttempts = config('mfa.max_verification_attempts', 5) - Cache::get("mfa_verification_limit_{$user->id}", 0);
             
-            Log::warning("Failed MFA verification attempt for user {$user->id}");
-            
             return [
                 'success' => false,
                 'message' => "Invalid verification code. {$remainingAttempts} attempts remaining.",
@@ -181,9 +176,6 @@ class MfaService
         // Code is valid - mark as used
         $verificationCode->markAsUsed();
         $this->resetVerificationAttempts($user);
-        
-        Log::info("User {$user->id} successfully verified MFA code");
-
         return [
             'success' => true,
             'message' => 'Verification successful',
@@ -215,9 +207,6 @@ class MfaService
         $deleted = EmailVerificationCode::expired()
             ->where('created_at', '<', now()->subDays(config('mfa.cleanup_after_days', 7)))
             ->delete();
-
-        Log::info("Cleaned up {$deleted} expired MFA codes");
-
         return $deleted;
     }
 
