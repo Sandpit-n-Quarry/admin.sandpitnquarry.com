@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Services\MfaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class MfaController extends Controller
@@ -43,7 +42,6 @@ class MfaController extends Controller
         
         // If no valid code exists, generate a new one
         if (!$verificationCode) {
-            Log::warning("No valid MFA code found for user {$user->id}, generating new one");
             $verificationCode = $this->mfaService->generateAndSendCode($user, $request->ip());
             
             if (!$verificationCode) {
@@ -52,21 +50,11 @@ class MfaController extends Controller
                 ]);
             }
         }
-        
-        Log::info("MFA page loaded", [
-            'user_id' => $user->id,
-            'code_id' => $verificationCode->id,
-            'expires_at' => $verificationCode->expires_at->toDateTimeString(),
-            'now' => now()->toDateTimeString(),
-        ]);
+
         
         $remainingTime = max(0, $verificationCode->expires_at->diffInSeconds(now()));
         $expiresAt = $verificationCode->expires_at;
         
-        Log::info("MFA remaining time calculated", [
-            'remaining_time' => $remainingTime,
-            'expires_at' => $expiresAt->toDateTimeString(),
-        ]);
 
         return view('authentication.mfa-verify', [
             'email' => $user->email,
@@ -109,8 +97,6 @@ class MfaController extends Controller
         $result = $this->mfaService->verifyCode($user, $request->code);
 
         if (!$result['success']) {
-            Log::warning("Failed MFA verification for user {$user->id}: {$result['error']}");
-            
             // If rate limit exceeded, clear session and redirect to login
             if ($result['error'] === 'rate_limit_exceeded') {
                 $request->session()->forget('mfa_user_id');
@@ -126,8 +112,6 @@ class MfaController extends Controller
         // Clear MFA session data
         $request->session()->forget(['mfa_user_id', 'mfa_remember']);
         $request->session()->regenerate();
-
-        Log::info("User {$user->id} successfully completed MFA and logged in");
 
         return redirect()->intended('/');
     }
