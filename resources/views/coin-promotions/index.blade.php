@@ -93,13 +93,13 @@
                                                     <a href="{{ route('coin-promotions.edit', $promotion->id) }}" class="btn btn-sm btn-warning text-white radius-4">
                                                         <iconify-icon icon="uil:edit" class="text-lg"></iconify-icon>
                                                     </a>
-                                                    <form action="{{ route('coin-promotions.destroy', $promotion->id) }}" method="POST" class="d-inline">
+                                                    <!-- <form action="{{ route('coin-promotions.destroy', $promotion->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger radius-4" onclick="return confirm('Are you sure you want to delete this promotion?')">
                                                             <iconify-icon icon="uil:trash-alt" class="text-lg"></iconify-icon>
                                                         </button>
-                                                    </form>
+                                                    </form> -->
                                                 </div>
                                             </td>
                                         </tr>

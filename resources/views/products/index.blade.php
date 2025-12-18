@@ -112,14 +112,13 @@ $script = '';
                                 <a href="{{ route('products.edit', $p->id) }}" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" title="Edit">
                                     <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                 </a>
-
-                                <form action="#" method="POST" style="display:inline;">
+                                <!-- <form action="#" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" title="Delete" onclick="return confirm('Are you sure you want to delete this product?')">
                                         <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </td>
                     </tr>
