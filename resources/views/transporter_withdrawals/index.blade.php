@@ -76,16 +76,16 @@ $subTitle = 'Transporter Withdrawals';
                             </td>
                             <td>
                                 @if($status == 'Pending')
-                                    <form method="POST" action="{{ route('transporter-withdrawals.update-status', $claim->id) }}">
+                                    <form method="POST" action="{{ route('transporter-withdrawals.update-status', $claim->id) }}" id="status-form-{{ $claim->id }}">
                                         @csrf
-                                        <select name="status" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                                        <select name="status" class="form-select form-select-sm w-auto d-inline-block bg-base text-secondary-light" onchange="confirmStatusChange(this, '{{ $claim->id }}')">
                                             <option value="Pending" selected>Pending</option>
                                             <option value="Approved">Approved</option>
                                             <option value="Reject">Reject</option>
                                         </select>
                                     </form>
                                 @else
-                                    <select class="form-select form-select-sm w-auto d-inline-block" disabled>
+                                    <select class="form-select form-select-sm w-auto d-inline-block bg-neutral-200 text-neutral-400" disabled style="cursor: not-allowed; opacity: 0.7;">
                                         <option selected>{{ $status }}</option>
                                     </select>
                                 @endif
@@ -178,4 +178,28 @@ $subTitle = 'Transporter Withdrawals';
         </div>
     </div>
 </div>
+
+<script>
+function confirmStatusChange(selectElement, claimId) {
+    const newStatus = selectElement.value;
+    const form = document.getElementById('status-form-' + claimId);
+    
+    if (newStatus === 'Pending') {
+        return;
+    }
+    
+    let message = '';
+    if (newStatus === 'Approved') {
+        message = 'Are you sure you want to approve this withdrawal? This action cannot be undone.';
+    } else if (newStatus === 'Reject') {
+        message = 'Are you sure you want to reject this withdrawal? This action cannot be undone.';
+    }
+    
+    if (confirm(message)) {
+        form.submit();
+    } else {
+        selectElement.value = 'Pending';
+    }
+}
+</script>
 @endsection
