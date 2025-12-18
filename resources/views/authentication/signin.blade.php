@@ -49,8 +49,8 @@
         background-color: rgba(255, 255, 255, 0.95);
         border-radius: 8px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        margin: 20px;
-        max-width: 500px;
+        margin: 50px;
+        max-width: 800px;
         z-index: 10;
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
