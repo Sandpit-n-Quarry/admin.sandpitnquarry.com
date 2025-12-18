@@ -70,11 +70,11 @@ $subTitle = 'Packages List';
                         <td>{{ $package->created_at ? $package->created_at->format('Y-m-d H:i') : '' }}</td>
                         <td class="text-center">
                             <a href="{{ route('packages.edit', $package) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <form action="{{ route('packages.destroy', $package) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this package?')">
+                            <!-- <form action="{{ route('packages.destroy', $package) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this package?')">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger">Delete</button>
-                            </form>
+                            </form> -->
                         </td>
                     </tr>
                     @empty

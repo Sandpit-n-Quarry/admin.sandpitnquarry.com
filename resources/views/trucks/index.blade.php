@@ -143,13 +143,13 @@ $script ='<script>
                                 <a href="{{ route('trucks.edit', $truck) }}" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle" title="Edit">
                                     <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                 </a>
-                                <form action="{{ route('trucks.destroy', $truck) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to mark this truck as deleted?')">
+                                <!-- <form action="{{ route('trucks.destroy', $truck) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to mark this truck as deleted?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" title="Delete">
                                         <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </td>
                     </tr>

@@ -166,13 +166,13 @@ $script ='<script>
                                     <iconify-icon icon="mdi:file-document-outline" class="menu-icon"></iconify-icon>
                                 </a>
                                 @endif
-                                <form action="{{ route('customer-accounts.destroy', $account) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this customer account?')">
+                                <!-- <form action="{{ route('customer-accounts.destroy', $account) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this customer account?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" title="Delete">
                                         <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                     </button>
-                                </form>
+                                </form> -->
                             </div>
                         </td>
                     </tr>
