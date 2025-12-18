@@ -75,14 +75,20 @@ $subTitle = 'Transporter Withdrawals';
                                 <span class="{{ $statusClass }} {{ $textClass }} border {{ $borderClass }} px-24 py-4 radius-4 fw-medium text-sm">{{ $status ?? '' }}</span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('transporter-withdrawals.update-status', $claim->id) }}">
-                                    @csrf
-                                    <select name="status" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
-                                        <option value="Approved" {{ $status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                                        <option value="Pending" {{ $status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="Reject" {{ $status == 'Reject' ? 'selected' : '' }}>Reject</option>
+                                @if($status == 'Pending')
+                                    <form method="POST" action="{{ route('transporter-withdrawals.update-status', $claim->id) }}">
+                                        @csrf
+                                        <select name="status" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+                                            <option value="Pending" selected>Pending</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Reject">Reject</option>
+                                        </select>
+                                    </form>
+                                @else
+                                    <select class="form-select form-select-sm w-auto d-inline-block" disabled>
+                                        <option selected>{{ $status }}</option>
                                     </select>
-                                </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
